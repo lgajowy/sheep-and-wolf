@@ -1,0 +1,5 @@
+/.project
+/sheep-wolf.cabal
+/.settings/*
+/Setup.hs
+/.dist-*
