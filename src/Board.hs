@@ -2,7 +2,7 @@ module Board where
 
 import Piece
 
-data Square = EmptySquare |  Square (Maybe Piece)
+data Square = EmptySquare | Square (Maybe Piece)
 
 instance Show Square where
     show EmptySquare                = "_"

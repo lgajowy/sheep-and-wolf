@@ -4,6 +4,8 @@ import Board
 import Piece
 import Player
 
+import System.Exit
+
 initialBoard :: Board
 initialBoard = [
                 [EmptySquare, Square (Just Sheep), EmptySquare, Square (Just Sheep), EmptySquare, Square (Just Sheep), EmptySquare, Square (Just Sheep)],
@@ -17,8 +19,6 @@ initialBoard = [
                ]
 
 
-
--- IO operations
 type GameState = (Board, WSPlayer)
 load :: (Read a) => FilePath -> IO a
 load f = do s <- readFile f
@@ -26,3 +26,10 @@ load f = do s <- readFile f
 
 save :: Board -> FilePath -> IO ()
 save x f = writeFile f (show x)
+
+exit :: IO()
+exit = exitWith ExitSuccess
+
+restart :: Board
+restart = initialBoard
+                  
