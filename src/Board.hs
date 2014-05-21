@@ -1,6 +1,7 @@
 module Board where
 
 import Piece
+import Data.List
 
 data Square = EmptySquare | Square (Maybe Piece)
 
@@ -28,6 +29,31 @@ printBoard (x:xs) = do printRow x
 
 
 type Position = (Int, Int)
+
+
+findWolf :: Board -> Int -> (Int, Maybe Int)
+findWolf (headRow:tailRows) counter = if (findWolfInRow(headRow) == Nothing) 
+                                    then findWolf tailRows (counter + 1)
+                                    else (counter, findWolfInRow(headRow))
+
+findWolfInRow :: [Square] -> Maybe Int
+findWolfInRow row = findIndex(fieldHasWolf) row
+
+fieldHasWolf field = 
+  case field of
+    EmptySquare         -> False
+    Square(Just Wolf)   -> True
+    _                   -> False
+
+findSheepInRow :: [Square] -> [Int]
+findSheepInRow row = findIndices(fieldHasSheep) row
+
+fieldHasSheep field = 
+  case field of
+    EmptySquare         -> False
+    Square(Just Sheep)  -> True
+    _                   -> False    
+
 
 updateMatrixAt ::  Position -> (Square->Square) -> Board -> Board
 updateMatrixAt (i,j) f board

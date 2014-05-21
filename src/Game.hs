@@ -6,6 +6,8 @@ import Player
 
 import System.Exit
 
+type GameState = (Board, WSPlayer)
+
 initialBoard :: Board
 initialBoard = [
                 [EmptySquare, Square (Just Sheep), EmptySquare, Square (Just Sheep), EmptySquare, Square (Just Sheep), EmptySquare, Square (Just Sheep)],
@@ -19,7 +21,9 @@ initialBoard = [
                ]
 
 
-type GameState = (Board, WSPlayer)
+gameBoard :: Board
+gameBoard = []
+
 load :: (Read a) => FilePath -> IO a
 load f = do s <- readFile f
             return (read s)
