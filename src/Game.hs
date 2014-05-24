@@ -4,8 +4,7 @@ import Board
 import Piece
 import Player
 import IngameDialogs
-
-import System.Exit
+import IngameOptions
 
 type GameState = (Board, WSPlayer)
 
@@ -21,49 +20,49 @@ initialBoard = [
                 [Square Nothing, EmptySquare, Square Nothing, Square(Just Wolf), Square Nothing, EmptySquare, Square Nothing, EmptySquare]
                ]
 
-mainGameLoop = do 
+run = do
     putStrLn welcomeMsg
+    mainProgramLoop
+
+mainProgramLoop = do 
     putStrLn optionsMsg
     option <- getLine
-    executeOption option
-    mainGameLoop
+    executeOption option initialBoard
+    mainProgramLoop
 
-executeOption option = case option of
-        "1" -> startGame
-        "2" -> saveGame
+executeOption option gameBoard = case option of
+        "1" -> startGame initialBoard
+        "2" -> saveGame gameBoard
         "3" -> loadGame
         "4" -> exitGame
         _ -> do
             putStrLn wrongOptionMsg
             option <- getLine
-            executeOption option
+            executeOption option gameBoard
 
-getPathFromUser = do 
-    putStrLn enterPathMsg
-    filePath <- getLine
-    return filePath
+inGameExecuteOption option gameBoard = case option of
+        "5" -> putStrLn "wolf moves\n"  --wolf movement
+        _   -> do executeOption option gameBoard
+                  putStrLn "wolf moves either\n"  --wolf movement        
 
-startGame = do 
+startGame gameBoard = do 
     putStrLn "game started"
+    gameLoop gameBoard
 
-saveGame = do  
-    path <- getPathFromUser
-    save initialBoard path
-    putStrLn gameSavedMsg
+gameLoop gameBoard = do
+    displayOptionsAndBoard gameBoard
+    option <- getLine
+    inGameExecuteOption option gameBoard
 
-loadGame = do 
-    path <- getPathFromUser     -- TODO! How to load game??
-    file <- load path
-    putStrLn file
-    
-exitGame = do
-    putStrLn exitMsg
-    exitSuccess
+    -- sheep moves
+    -- updateMatrixAt
+    -- displayBoard gameBoard
+    -- check verdict if game lost/won display message gameloop otherwise!
+
+    gameLoop gameBoard
+
+displayOptionsAndBoard board = do
+    printBoard board
+    putStrLn (optionsMsg ++ moveOptionMsg)
 
 
-load :: (Read a) => FilePath -> IO a
-load f = do s <- readFile f
-            return (read s)
-
-save :: Board -> FilePath -> IO ()
-save board filePath = writeFile filePath (show board)

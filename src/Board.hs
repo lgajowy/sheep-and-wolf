@@ -3,6 +3,7 @@ module Board where
 import Piece
 import Data.List
 
+
 data Square = EmptySquare | Square (Maybe Piece)
 
 instance Show Square where
@@ -17,6 +18,7 @@ readsPrec _ (s:xs)  | s == '_' = [(EmptySquare, xs)]
                     | s == 'S' = [(Square (Just Sheep), xs)]
 
 type Board = [[Square]]
+type Position = (Int, Int)
 
 printRow :: [Square] -> IO ()
 printRow row = do putStrLn (foldl (++) [] (map show row))
@@ -24,12 +26,9 @@ printRow row = do putStrLn (foldl (++) [] (map show row))
 printBoard :: Board -> IO ()
 printBoard []     = error "Trying to print empty board (0 x 0)"
 printBoard [x]    = do printRow x
+                       putStrLn "\n"
 printBoard (x:xs) = do printRow x
                        printBoard xs
-
-
-type Position = (Int, Int)
-
 
 findWolf :: Board -> Int -> (Int, Maybe Int)
 findWolf (headRow:tailRows) counter = if (findWolfInRow(headRow) == Nothing) 
@@ -54,7 +53,6 @@ fieldHasSheep field =
     Square(Just Sheep)  -> True
     _                   -> False    
 
-
 updateMatrixAt ::  Position -> (Square->Square) -> Board -> Board
 updateMatrixAt (i,j) f board
  | (upperRows, thisRow : lowerRows ) <- splitAt i board
@@ -63,7 +61,3 @@ updateMatrixAt (i,j) f board
           ++ (leftCells ++ (f thisCell): rightCells)
                           : lowerRows
  | otherwise = error "Tried to index matrix outside range"
-
-outside,inside::Position->Bool
-outside (a, b) = a < 0 || b < 0 || a > 7 || b > 7       --todo: make it dynamic
-inside = not . outside

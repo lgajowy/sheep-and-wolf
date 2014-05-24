@@ -8,7 +8,9 @@ optionsMsg = "Choose option (from 1 to 4):\n\
 	      \1. Start / Restart game\n\
 		  \2. Save game\n\
 		  \3. Load game (overwrites current game state!)\n\
-		  \4. Exit game"
+		  \4. Exit game\n"
+
+moveOptionMsg = "5. moveWolf\n"
 
 wrongOptionMsg = "Wrong option! Please choose again:"
 
@@ -19,6 +21,8 @@ gameLoadedMsg = "Game loaded."
 gameSavedMsg = "Game saved"
 
 exitMsg = "Bye bye!"
+
+wolfMoveMsg = "Wolf's turn. Choose direction:"
 
 
 
