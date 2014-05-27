@@ -2,6 +2,7 @@ module Board where
 
 import Piece
 import Data.List
+import Gametree.Utils
 
 
 data Square = EmptySquare | Square (Maybe Piece)
@@ -18,7 +19,6 @@ readsPrec _ (s:xs)  | s == '_' = [(EmptySquare, xs)]
                     | s == 'S' = [(Square (Just Sheep), xs)]
 
 type Board = [[Square]]
-type Position = (Int, Int)
 
 printRow :: [Square] -> IO ()
 printRow row = do putStrLn (foldl (++) [] (map show row))
@@ -53,8 +53,14 @@ fieldHasSheep field =
     Square(Just Sheep)  -> True
     _                   -> False    
 
+
+-- printBoard (updateMatrixAt (1, 0) (\_ -> EmptySquare) initialBoard)
+-- printBoard (updateMatrixAt (1, 0) (\_ -> Square(Just Wolf)) initialBoard)
+-- printBoard (updateMatrixAt (1, 0) (\_ -> Square(Just Wolf)) initialBoard)
+
+
 updateMatrixAt ::  Position -> (Square->Square) -> Board -> Board
-updateMatrixAt (i,j) f board
+updateMatrixAt (j,i) f board
  | (upperRows, thisRow : lowerRows ) <- splitAt i board
  , (leftCells, thisCell: rightCells) <- splitAt j thisRow
          =                  upperRows

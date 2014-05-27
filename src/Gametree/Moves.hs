@@ -1,7 +1,7 @@
-module Moves where
+module Gametree.Moves where
 
 import Data.Maybe
-import Utils
+import Gametree.Utils
 
 --common functions
 
@@ -39,6 +39,7 @@ possibleSheepsMoves :: FiguresPositions -> [FiguresPositions]
 possibleSheepsMoves positions = foldl (++) [] (map (\x -> (mapMaybe (moveSheep positions x) moves)) sheeps)
         where moves = cartProd [-1, 1] [1]
               sheeps = [1..4]
+
 
 --Wolf
 -- tries to move the wolf, if move valid returns the new vector of positions

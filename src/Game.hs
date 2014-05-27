@@ -5,6 +5,10 @@ import Piece
 import Player
 import IngameDialogs
 import IngameOptions
+import Gametree.Moves
+import Gametree.GameTree
+import Gametree.Utils
+import Data.List
 
 type GameState = (Board, WSPlayer)
 
@@ -17,8 +21,11 @@ initialBoard = [
                 [EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare, Square Nothing],
                 [Square Nothing, EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare],
                 [EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare, Square Nothing],
-                [Square Nothing, EmptySquare, Square Nothing, Square(Just Wolf), Square Nothing, EmptySquare, Square Nothing, EmptySquare]
+                [Square Nothing, EmptySquare, Square(Just Wolf), EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare]
                ]
+
+initialPawnPositions = [(2,7), (1,0), (3,0), (5,0), (7,0)] :: [(Int, Int)]
+
 
 run = do
     putStrLn welcomeMsg
@@ -47,22 +54,47 @@ inGameExecuteOption option gameBoard = case option of
 
 startGame gameBoard = do 
     putStrLn "game started"
-    gameLoop gameBoard
+    gameLoop gameBoard initialPawnPositions
 
-gameLoop gameBoard = do
+gameLoop gameBoard pawnPositions = do   -- TODO WolfMove. Jezeli gra nie skonczona to sheepmove - zamiast pętli
     displayOptionsAndBoard gameBoard
     option <- getLine
     inGameExecuteOption option gameBoard
 
-    -- sheep moves
-    -- updateMatrixAt
-    -- displayBoard gameBoard
-    -- check verdict if game lost/won display message gameloop otherwise!
+    board <- moveWolfOnBoard (head pawnPositions) (3,6) gameBoard -- TODO: pass position
+    positions <- getNewSheepPositions ((3,6):(tail pawnPositions))
+    board <- moveSheepOnBoard board (pawnPositions) positions
+    
+    checkVerdict board positions SheepsTurn
 
-    gameLoop gameBoard
+
+checkVerdict board pawnPositions turn = do 
+    case verdict pawnPositions turn of
+        WolfWon ->      putStrLn "Wolf has won!"
+        SheepsWon ->    putStrLn "Sheep has won!"
+        NotEnd ->       case turn of 
+                            SheepsTurn -> gameLoop board pawnPositions
+                            WolfTurn -> putStrLn "Continue."
+        
+
+wolfMovement = do
+    putStrLn "enter position"
+
+validateWolfPosition newPosition (wolf:sheep) = (newPosition:sheep) `elem` possibleWolfMoves (wolf:sheep)
+
+moveWolfOnBoard oldPosition newPosition board = do
+      return (updateMatrixAt newPosition (\_ -> Square(Just Wolf)) (updateMatrixAt oldPosition (\_ -> Square(Nothing)) board))
+
+getNewSheepPositions oldPositions = do
+    return (chooseMove oldPositions)
+
+moveSheepOnBoard board oldPositions newPositions =
+            return (foldl (putNothing) (foldl (putSheep) board (tail (newPositions))) ((tail oldPositions) \\ (tail (newPositions))))
+
+putSheep board position = updateMatrixAt position (\_ -> Square(Just Sheep)) board
+
+putNothing board position = updateMatrixAt position (\_ -> Square(Nothing)) board
 
 displayOptionsAndBoard board = do
     printBoard board
     putStrLn (optionsMsg ++ moveOptionMsg)
-
-
