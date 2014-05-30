@@ -59,6 +59,7 @@ fieldHasSheep field =
 -- printBoard (updateMatrixAt (1, 0) (\_ -> Square(Just Wolf)) initialBoard)
 
 
+
 updateMatrixAt ::  Position -> (Square->Square) -> Board -> Board
 updateMatrixAt (j,i) f board
  | (upperRows, thisRow : lowerRows ) <- splitAt i board
@@ -67,3 +68,13 @@ updateMatrixAt (j,i) f board
           ++ (leftCells ++ (f thisCell): rightCells)
                           : lowerRows
  | otherwise = error "Tried to index matrix outside range"
+
+
+moveWolfOnBoard oldPosition newPosition board = do
+      return (updateMatrixAt newPosition (\_ -> Square(Just Wolf)) (updateMatrixAt oldPosition (\_ -> Square(Nothing)) board))
+
+moveSheepOnBoard board oldPositions newPositions =
+      return (foldl (putNothing) (foldl (putSheep) board (tail (newPositions))) ((tail oldPositions) \\ (tail (newPositions))))
+
+putSheep board position = updateMatrixAt position (\_ -> Square(Just Sheep)) board
+putNothing board position = updateMatrixAt position (\_ -> Square(Nothing)) board

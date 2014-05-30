@@ -24,18 +24,19 @@ initialBoard = [
                 [Square Nothing, EmptySquare, Square(Just Wolf), EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare]
                ]
 
-initialPawnPositions = [(2,7), (1,0), (3,0), (5,0), (7,0)] :: [(Int, Int)]
+initialSheepPositions = [(1,0), (3,0), (5,0), (7,0)] :: [(Int, Int)]
 
 
 run = do
     putStrLn welcomeMsg
     mainProgramLoop
 
+
 mainProgramLoop = do 
     putStrLn optionsMsg
     option <- getLine
     executeOption option initialBoard
-    mainProgramLoop
+
 
 executeOption option gameBoard = case option of
         "1" -> startGame initialBoard
@@ -47,53 +48,68 @@ executeOption option gameBoard = case option of
             option <- getLine
             executeOption option gameBoard
 
+
 inGameExecuteOption option gameBoard = case option of
+        "1" -> startGame initialBoard
+        "2" -> saveGame gameBoard
+        "3" -> loadGame
+        "4" -> exitGame
         "5" -> putStrLn "wolf moves\n"  --wolf movement
-        _   -> do executeOption option gameBoard
-                  putStrLn "wolf moves either\n"  --wolf movement        
+        _ -> do
+            putStrLn wrongOptionMsg
+            option <- getLine
+            inGameExecuteOption option gameBoard        
 
-startGame gameBoard = do 
-    putStrLn "game started"
-    gameLoop gameBoard initialPawnPositions
+startGame gameBoard = do  
+    startingPawnPositions <- chooseWolfStartingPosition
+    startingBoard <- moveWolfOnBoard (0,0) (head startingPawnPositions) gameBoard
+    gameLoop startingBoard startingPawnPositions
 
-gameLoop gameBoard pawnPositions = do   -- TODO WolfMove. Jezeli gra nie skonczona to sheepmove - zamiast pętli
+
+chooseWolfStartingPosition = do 
+    putStrLn wolfStartingPosMsg
+
+    --TODO: user inputs and we set the initial pawn positions
+    initalWolfPos <- return (2,7)
+    pawnPos <- return  (initalWolfPos : initialSheepPositions)
+    return pawnPos 
+     
+
+gameLoop gameBoard pawnPositions = do 
     displayOptionsAndBoard gameBoard
     option <- getLine
-    inGameExecuteOption option gameBoard
+    inGameExecuteOption option gameBoard    --TODO how to move from inGameExecution? return coordinates from this function??
+    wolfMove gameBoard pawnPositions (3,6)  --TODO!! PASS COORDINATES FROM USER!!
 
-    board <- moveWolfOnBoard (head pawnPositions) (3,6) gameBoard -- TODO: pass position
-    positions <- getNewSheepPositions ((3,6):(tail pawnPositions))
-    board <- moveSheepOnBoard board (pawnPositions) positions
-    
+
+wolfMove gameBoard pawnPositions moveCoordinates = do
+     board <- moveWolfOnBoard (head pawnPositions) moveCoordinates gameBoard
+     printBoard board
+     newPawnPositions <- return (moveCoordinates : (tail pawnPositions))
+     checkVerdict board newPawnPositions WolfTurn
+
+
+sheepMove gameBoard pawnPositions = do 
+    positions <- getNewSheepPositions (pawnPositions)
+    board <- moveSheepOnBoard gameBoard (pawnPositions) positions
+    printBoard board
     checkVerdict board positions SheepsTurn
 
 
-checkVerdict board pawnPositions turn = do 
-    case verdict pawnPositions turn of
-        WolfWon ->      putStrLn "Wolf has won!"
-        SheepsWon ->    putStrLn "Sheep has won!"
-        NotEnd ->       case turn of 
-                            SheepsTurn -> gameLoop board pawnPositions
-                            WolfTurn -> putStrLn "Continue."
-        
+checkVerdict board positions turn = case verdict positions turn of 
+    WolfWon     ->    putStrLn wolfWonMsg
+    SheepsWon   ->    putStrLn sheepWonMsg
+    NotEnd      ->    if turn == SheepsTurn then gameLoop board positions 
+                                else sheepMove board positions
 
-wolfMovement = do
-    putStrLn "enter position"
+
+
+
 
 validateWolfPosition newPosition (wolf:sheep) = (newPosition:sheep) `elem` possibleWolfMoves (wolf:sheep)
 
-moveWolfOnBoard oldPosition newPosition board = do
-      return (updateMatrixAt newPosition (\_ -> Square(Just Wolf)) (updateMatrixAt oldPosition (\_ -> Square(Nothing)) board))
-
 getNewSheepPositions oldPositions = do
     return (chooseMove oldPositions)
-
-moveSheepOnBoard board oldPositions newPositions =
-            return (foldl (putNothing) (foldl (putSheep) board (tail (newPositions))) ((tail oldPositions) \\ (tail (newPositions))))
-
-putSheep board position = updateMatrixAt position (\_ -> Square(Just Sheep)) board
-
-putNothing board position = updateMatrixAt position (\_ -> Square(Nothing)) board
 
 displayOptionsAndBoard board = do
     printBoard board
