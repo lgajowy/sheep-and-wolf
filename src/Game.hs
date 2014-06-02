@@ -21,7 +21,7 @@ initialBoard = [
                 [EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare, Square Nothing],
                 [Square Nothing, EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare],
                 [EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare, Square Nothing],
-                [Square Nothing, EmptySquare, Square(Just Wolf), EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare]
+                [Square Nothing, EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare]
                ]
 
 initialSheepPositions = [(1,0), (3,0), (5,0), (7,0)] :: [(Int, Int)]
@@ -54,7 +54,7 @@ inGameExecuteOption option gameBoard = case option of
         "2" -> saveGame gameBoard
         "3" -> loadGame
         "4" -> exitGame
-        "5" -> putStrLn "wolf moves\n"  --wolf movement
+        "5" -> putStrLn "wolf moves\n"  
         _ -> do
             putStrLn wrongOptionMsg
             option <- getLine
@@ -62,15 +62,14 @@ inGameExecuteOption option gameBoard = case option of
 
 startGame gameBoard = do  
     startingPawnPositions <- chooseWolfStartingPosition
-    startingBoard <- moveWolfOnBoard (0,0) (head startingPawnPositions) gameBoard
+    startingBoard <- moveWolfOnBoard (2,7) (head startingPawnPositions) gameBoard
     gameLoop startingBoard startingPawnPositions
 
 
 chooseWolfStartingPosition = do 
     putStrLn wolfStartingPosMsg
-
-    --TODO: user inputs and we set the initial pawn positions
-    initalWolfPos <- return (2,7)
+    position <- getWolfMovementDirectionFromUser
+    initalWolfPos <- return position
     pawnPos <- return  (initalWolfPos : initialSheepPositions)
     return pawnPos 
      
@@ -79,8 +78,14 @@ gameLoop gameBoard pawnPositions = do
     displayOptionsAndBoard gameBoard
     option <- getLine
     inGameExecuteOption option gameBoard    --TODO how to move from inGameExecution? return coordinates from this function??
-    wolfMove gameBoard pawnPositions (3,6)  --TODO!! PASS COORDINATES FROM USER!!
+    newWolfPosition <- getWolfMovementDirectionFromUser
+    wolfMove gameBoard pawnPositions newWolfPosition
 
+
+getWolfMovementDirectionFromUser = do
+    putStrLn "please insert wolf position"
+    position <- getLine
+    return (read(position) :: Position)
 
 wolfMove gameBoard pawnPositions moveCoordinates = do
      board <- moveWolfOnBoard (head pawnPositions) moveCoordinates gameBoard
@@ -103,13 +108,12 @@ checkVerdict board positions turn = case verdict positions turn of
                                 else sheepMove board positions
 
 
-
-
-
 validateWolfPosition newPosition (wolf:sheep) = (newPosition:sheep) `elem` possibleWolfMoves (wolf:sheep)
+
 
 getNewSheepPositions oldPositions = do
     return (chooseMove oldPositions)
+
 
 displayOptionsAndBoard board = do
     printBoard board

@@ -30,18 +30,18 @@ initWolf, initSheeps :: FiguresPositions -> [GameTree]
 initWolf a   = map (\x -> Node SheepsTurn x) (possibleWolfMoves a)
 initSheeps a = map (\x -> Node WolfTurn x) (possibleSheepsMoves a)
 
-distanceSum :: FiguresPositions -> Int
-distanceSum (w:xs) = maximum (map distance (permutations xs)) + (distance (w:xs))
-
-distance :: FiguresPositions -> Int
-distance positions = maximum (map (oneDistance (head positions)) (tail positions))
-    where oneDistance (x1, y1) (x2, y2) = round (sqrt (fromIntegral((x2 - x1))^2 + fromIntegral((y2 - y1))^2))
+distanceSum :: FiguresPositions -> Float
+distanceSum (w:xs) =  maximum (map distanceSheep (permutations xs)) + (distanceWolf (w:xs)) / 4
+    where   distanceWolf positions = sum (map (oneDistanceWolf (head positions)) (tail positions))
+            distanceSheep positions = maximum (map (oneDistanceSheep (head positions)) (tail positions))
+            oneDistanceWolf (x1, y1) (x2, y2) = sqrt (fromIntegral((x2 - x1))^2 + fromIntegral((y2 - y1))^2)
+            oneDistanceSheep (x1, y1) (x2, y2) = fromIntegral(abs(y2 - y1))
 
 
 --Rates the current node. The tree is evaluated up to 7 level deep. Starting from the given level
 --For not fully evaluated nodes it uses heuristic so that the algorithm tries to minimize distance to wolf
 -- and distance between sheeps
-rate :: GameTree -> Int -> Int
+rate :: GameTree -> Int -> Float
 rate (Node t a) depth = if depth < 6 then verd else incompleteVerd
                                     where verd = case verdict a t of
                                                     NotEnd ->  if t == WolfTurn then minimum (map (\x -> rate x (depth + 1)) (initWolf a))
@@ -51,7 +51,7 @@ rate (Node t a) depth = if depth < 6 then verd else incompleteVerd
                                           incompleteVerd = (-1) * (distanceSum a)
 
 --scores the given node.
-score :: GameTree -> (FiguresPositions, Int)
+score :: GameTree -> (FiguresPositions, Float)
 score (Node t a) = (a, (rate (Node t a) 1))
 
 -- chooses the best sheeps move in given situation

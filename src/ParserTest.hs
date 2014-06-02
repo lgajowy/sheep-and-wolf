@@ -17,14 +17,8 @@ test4 = do
 	parse coord "1,  2)"
 
 test5 = do 
-	coordi <- getCoord
-	parse coord coordi
-
-
-getCoord :: String
-getCoord = do 
-	coordinates <- getLine
-	return coordinates
+	coordinates <- return getLine
+	parse coord coordinates
 
 
 
