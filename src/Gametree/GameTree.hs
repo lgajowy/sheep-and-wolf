@@ -31,10 +31,10 @@ initWolf a   = map (\x -> Node SheepsTurn x) (possibleWolfMoves a)
 initSheeps a = map (\x -> Node WolfTurn x) (possibleSheepsMoves a)
 
 distanceSum :: FiguresPositions -> Float
-distanceSum (w:xs) =  maximum (map distanceSheep (permutations xs)) + (distanceWolf (w:xs)) / 4
+distanceSum (w:xs) =  maximum (map distanceSheep (permutations xs)) + (distanceWolf (w:xs)) / 2
     where   distanceWolf positions = sum (map (oneDistanceWolf (head positions)) (tail positions))
             distanceSheep positions = maximum (map (oneDistanceSheep (head positions)) (tail positions))
-            oneDistanceWolf (x1, y1) (x2, y2) = sqrt (fromIntegral((x2 - x1))^2 + fromIntegral((y2 - y1))^2)
+            oneDistanceWolf (x1, y1) (x2, y2) = sqrt (fromIntegral(abs(x2 - x1))^2 + fromIntegral(abs(y2 - y1))^2)
             oneDistanceSheep (x1, y1) (x2, y2) = fromIntegral(abs(y2 - y1))
 
 
@@ -46,8 +46,8 @@ rate (Node t a) depth = if depth < 6 then verd else incompleteVerd
                                     where verd = case verdict a t of
                                                     NotEnd ->  if t == WolfTurn then minimum (map (\x -> rate x (depth + 1)) (initWolf a))
                                                                             else maximum (map (\x -> rate x (depth + 1)) (initSheeps a))
-                                                    WolfWon -> (-100)
-                                                    SheepsWon -> 100
+                                                    WolfWon -> (-100000)
+                                                    SheepsWon -> 100000
                                           incompleteVerd = (-1) * (distanceSum a)
 
 --scores the given node.
