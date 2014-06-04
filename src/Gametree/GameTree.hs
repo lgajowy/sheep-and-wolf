@@ -30,6 +30,10 @@ initWolf, initSheeps :: FiguresPositions -> [GameTree]
 initWolf a   = map (\x -> Node SheepsTurn x) (possibleWolfMoves a)
 initSheeps a = map (\x -> Node WolfTurn x) (possibleSheepsMoves a)
 
+--heuristics functions
+probablySheepLost positions = length ((elemIndices True (map (greater (head positions)) (tail positions)))) >= 3
+  where greater (_, w) (_, s) = (w <= s)
+
 distanceSum :: FiguresPositions -> Float
 distanceSum (w:xs) =  maximum (map distanceSheep (permutations xs)) + (distanceWolf (w:xs)) / 2
     where   distanceWolf positions = sum (map (oneDistanceWolf (head positions)) (tail positions))
@@ -48,7 +52,7 @@ rate (Node t a) depth = if depth < 6 then verd else incompleteVerd
                                                                             else maximum (map (\x -> rate x (depth + 1)) (initSheeps a))
                                                     WolfWon -> (-100000)
                                                     SheepsWon -> 100000
-                                          incompleteVerd = (-1) * (distanceSum a)
+                                          incompleteVerd = if probablySheepLost a then (-200) else (-1) * (distanceSum a)
 
 --scores the given node.
 score :: GameTree -> (FiguresPositions, Float)
@@ -60,6 +64,6 @@ chooseMove positions = fst (maximumBy (\(x, y) (x1, y1) -> compare y y1) nodes)
             where nodes = map (score) (initSheeps positions)
 
 examplePosition = [(1,6),(0,5),(3,5),(3,7),(5,7)] :: FiguresPositions
-lostTree = Node SheepsTurn [(0,7), (0,5), (2,5), (3,6), (4,7)]
+lostTree = [(3,6), (1,2), (1,4), (3,4), (5,6)] :: FiguresPositions
 exampleTree = Node WolfTurn [(0,0), (0,0), (0,0), (0,0), (0,0)]
 gameTree = Node SheepsTurn [(0,7), (1,0), (3,0), (5,0), (7,0)]

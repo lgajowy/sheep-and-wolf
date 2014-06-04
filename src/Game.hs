@@ -32,7 +32,7 @@ run = do
     mainProgramLoop
 
 
-mainProgramLoop = do 
+mainProgramLoop = do
     putStrLn optionsMsg
     option <- getLine
     executeOption option initialBoard
@@ -54,38 +54,60 @@ inGameExecuteOption option gameBoard = case option of
         "2" -> saveGame gameBoard
         "3" -> loadGame
         "4" -> exitGame
-        "5" -> putStrLn "wolf moves\n"  
+        "5" -> putStrLn "wolf moves\n"
         _ -> do
             putStrLn wrongOptionMsg
             option <- getLine
-            inGameExecuteOption option gameBoard        
+            inGameExecuteOption option gameBoard
 
-startGame gameBoard = do  
+startGame gameBoard = do
     startingPawnPositions <- chooseWolfStartingPosition
     startingBoard <- moveWolfOnBoard (2,7) (head startingPawnPositions) gameBoard
     gameLoop startingBoard startingPawnPositions
 
 
-chooseWolfStartingPosition = do 
+chooseWolfStartingPosition = do
     putStrLn wolfStartingPosMsg
-    position <- getWolfMovementDirectionFromUser
-    initalWolfPos <- return position
-    pawnPos <- return  (initalWolfPos : initialSheepPositions)
-    return pawnPos 
-     
+    pawnPos <- return  ((0, 7) : initialSheepPositions)
+    return pawnPos
 
-gameLoop gameBoard pawnPositions = do 
+
+gameLoop gameBoard pawnPositions = do
     displayOptionsAndBoard gameBoard
     option <- getLine
     inGameExecuteOption option gameBoard    --TODO how to move from inGameExecution? return coordinates from this function??
-    newWolfPosition <- getWolfMovementDirectionFromUser
+    newWolfPosition <- getWolfMovementDirectionFromUser (head pawnPositions) pawnPositions
     wolfMove gameBoard pawnPositions newWolfPosition
 
+getWolfLeftRight (x,y) = do
+  putStrLn "(L)eft/(R)ight?"
+  direction <- getLine
+  case direction of
+      "L" -> return (x - 1, y)
+      "l" -> return (x - 1, y)
+      "R" -> return (x + 1, y)
+      "r" -> return (x + 1, y)
+      _ -> getWolfLeftRight (x,y)
 
-getWolfMovementDirectionFromUser = do
-    putStrLn "please insert wolf position"
-    position <- getLine
-    return (read(position) :: Position)
+
+getWolfUpDown (x,y) = do
+  putStrLn "(U)p/(D)own?"
+  direction <- getLine
+  case direction of
+      "U" -> getWolfLeftRight (x, y - 1)
+      "u" -> getWolfLeftRight (x, y - 1)
+      "D" -> getWolfLeftRight (x, y + 1)
+      "d" -> getWolfLeftRight (x, y + 1)
+      _ -> getWolfUpDown (x,y)
+
+getWolfMovementDirectionFromUser pos pawnPositions = do
+    position <- getWolfUpDown pos
+    if validateWolfPosition position pawnPositions then
+      return position
+    else
+      do
+        putStrLn "Invalid move"
+        getWolfMovementDirectionFromUser pos pawnPositions
 
 wolfMove gameBoard pawnPositions moveCoordinates = do
      board <- moveWolfOnBoard (head pawnPositions) moveCoordinates gameBoard
@@ -94,17 +116,17 @@ wolfMove gameBoard pawnPositions moveCoordinates = do
      checkVerdict board newPawnPositions WolfTurn
 
 
-sheepMove gameBoard pawnPositions = do 
+sheepMove gameBoard pawnPositions = do
     positions <- getNewSheepPositions (pawnPositions)
     board <- moveSheepOnBoard gameBoard (pawnPositions) positions
     printBoard board
     checkVerdict board positions SheepsTurn
 
 
-checkVerdict board positions turn = case verdict positions turn of 
+checkVerdict board positions turn = case verdict positions turn of
     WolfWon     ->    putStrLn wolfWonMsg
     SheepsWon   ->    putStrLn sheepWonMsg
-    NotEnd      ->    if turn == SheepsTurn then gameLoop board positions 
+    NotEnd      ->    if turn == SheepsTurn then gameLoop board positions
                                 else sheepMove board positions
 
 
