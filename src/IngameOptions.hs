@@ -10,7 +10,7 @@ saveGame board = do
     putStrLn gameSavedMsg
 
 loadGame = do 
-    path <- getPathFromUser     -- TODO! How to load game??
+    path <- getPathFromUser 
     file <- load path
     putStrLn file
     

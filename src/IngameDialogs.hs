@@ -11,17 +11,23 @@ optionsMsg = "Choose option (from 1 to 4):\n\
 		  \4. Exit game\n"
 
 wolfStartingPosMsg = "Plese give wolf starting position:\n\
-					\Valid fields: (0,7) | (2,7) | (4,7) | (6,7)"
+					\Enter 1 for field (0,7)\n\
+					\2 for field (2,7)\n\
+					\3 for field (4,7)\n\
+					\4 for field (6,7)\n"
 
-moveOptionMsg = "5. moveWolf\n"
+invalidStartingPositionMsg = "Invalid starting position! Please try again!\n"
 
-wrongOptionMsg = "Wrong option! Please choose again:"
 
-enterPathMsg = "Please enter file path:"
+moveOptionMsg = "5. Move wolf pawn\n"
 
-gameLoadedMsg = "Game loaded."
+wrongOptionMsg = "Wrong option! Please choose again:\n"
 
-gameSavedMsg = "Game saved"
+enterPathMsg = "Please enter file path:\n"
+
+gameLoadedMsg = "Game loaded.\n"
+
+gameSavedMsg = "Game saved.\n"
 
 exitMsg = "Bye bye!"
 

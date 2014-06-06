@@ -54,3 +54,10 @@ possibleWolfMoves :: FiguresPositions -> [FiguresPositions]
 possibleWolfMoves positions = mapMaybe (moveWolf positions) moves
         where moves = cartProd [-1, 1] [-1, 1]
               
+validateWolfPosition newPosition (wolf:sheep) = (newPosition:sheep) `elem` possibleWolfMoves (wolf:sheep)
+
+
+
+
+
+

@@ -10,8 +10,6 @@ import Gametree.GameTree
 import Gametree.Utils
 import Data.List
 
-type GameState = (Board, WSPlayer)
-
 initialBoard :: Board
 initialBoard = [
                 [EmptySquare, Square (Just Sheep), EmptySquare, Square (Just Sheep), EmptySquare, Square (Just Sheep), EmptySquare, Square (Just Sheep)],
@@ -26,17 +24,14 @@ initialBoard = [
 
 initialSheepPositions = [(1,0), (3,0), (5,0), (7,0)] :: [(Int, Int)]
 
-
 run = do
     putStrLn welcomeMsg
     mainProgramLoop
-
 
 mainProgramLoop = do
     putStrLn optionsMsg
     option <- getLine
     executeOption option initialBoard
-
 
 executeOption option gameBoard = case option of
         "1" -> startGame initialBoard
@@ -47,7 +42,6 @@ executeOption option gameBoard = case option of
             putStrLn wrongOptionMsg
             option <- getLine
             executeOption option gameBoard
-
 
 inGameExecuteOption option gameBoard = case option of
         "1" -> startGame initialBoard
@@ -60,22 +54,37 @@ inGameExecuteOption option gameBoard = case option of
             option <- getLine
             inGameExecuteOption option gameBoard
 
+
+
 startGame gameBoard = do
-    startingPawnPositions <- chooseWolfStartingPosition
+    startingPawnPositions <- chooseWolfStartingPosition    
     startingBoard <- moveWolfOnBoard (2,7) (head startingPawnPositions) gameBoard
     gameLoop startingBoard startingPawnPositions
 
 
 chooseWolfStartingPosition = do
-    putStrLn wolfStartingPosMsg
+    putStrLn wolfStartingPosMsg  
+
+    choosenPosition <- getStartingPositionFromUser
     pawnPos <- return  ((0, 7) : initialSheepPositions)
     return pawnPos
+
+getStartingPositionFromUser = do
+  position <- getLine
+  case position of
+    "1" -> return (0,7)
+    "2" -> return (2,7)
+    "3" -> return (4,7)
+    "4" -> return (6,7)
+    _   -> do 
+          putStrLn invalidStartingPositionMsg
+          getStartingPositionFromUser
 
 
 gameLoop gameBoard pawnPositions = do
     displayOptionsAndBoard gameBoard
     option <- getLine
-    inGameExecuteOption option gameBoard    --TODO how to move from inGameExecution? return coordinates from this function??
+    inGameExecuteOption option gameBoard
     newWolfPosition <- getWolfMovementDirectionFromUser (head pawnPositions) pawnPositions
     wolfMove gameBoard pawnPositions newWolfPosition
 
@@ -128,9 +137,6 @@ checkVerdict board positions turn = case verdict positions turn of
     SheepsWon   ->    putStrLn sheepWonMsg
     NotEnd      ->    if turn == SheepsTurn then gameLoop board positions
                                 else sheepMove board positions
-
-
-validateWolfPosition newPosition (wolf:sheep) = (newPosition:sheep) `elem` possibleWolfMoves (wolf:sheep)
 
 
 getNewSheepPositions oldPositions = do
