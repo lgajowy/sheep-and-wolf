@@ -58,6 +58,10 @@ rate (Node t a) depth = if depth < 6 then verd else incompleteVerd
 score :: GameTree -> (FiguresPositions, Float)
 score (Node t a) = (a, (rate (Node t a) 1))
 
+
+getNewSheepPositions oldPositions = do
+    return (chooseMove oldPositions)
+
 -- chooses the best sheeps move in given situation
 chooseMove :: FiguresPositions -> FiguresPositions
 chooseMove positions = fst (maximumBy (\(x, y) (x1, y1) -> compare y y1) nodes)

@@ -61,3 +61,4 @@ validateWolfPosition newPosition (wolf:sheep) = (newPosition:sheep) `elem` possi
 
 
 
+

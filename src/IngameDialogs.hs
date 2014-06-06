@@ -18,10 +18,15 @@ wolfStartingPosMsg = "Plese give wolf starting position:\n\
 
 invalidStartingPositionMsg = "Invalid starting position! Please try again!\n"
 
-
 moveOptionMsg = "5. Move wolf pawn\n"
 
 wrongOptionMsg = "Wrong option! Please choose again:\n"
+
+leftRightMsg = "(L)eft/(R)ight?"
+
+upDownMsg = "(U)p/(D)own?"
+
+invalidMoveMsg = "Invalid move"
 
 enterPathMsg = "Please enter file path:\n"
 

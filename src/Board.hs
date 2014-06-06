@@ -53,13 +53,6 @@ fieldHasSheep field =
     Square(Just Sheep)  -> True
     _                   -> False    
 
-
--- printBoard (updateMatrixAt (1, 0) (\_ -> EmptySquare) initialBoard)
--- printBoard (updateMatrixAt (1, 0) (\_ -> Square(Just Wolf)) initialBoard)
--- printBoard (updateMatrixAt (1, 0) (\_ -> Square(Just Wolf)) initialBoard)
-
-
-
 updateMatrixAt ::  Position -> (Square->Square) -> Board -> Board
 updateMatrixAt (j,i) f board
  | (upperRows, thisRow : lowerRows ) <- splitAt i board

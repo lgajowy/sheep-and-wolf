@@ -9,6 +9,7 @@ import Gametree.Moves
 import Gametree.GameTree
 import Gametree.Utils
 import Data.List
+import UserInteraction
 
 initialBoard :: Board
 initialBoard = [
@@ -57,16 +58,15 @@ inGameExecuteOption option gameBoard = case option of
 
 
 startGame gameBoard = do
-    startingPawnPositions <- chooseWolfStartingPosition    
+    startingPawnPositions <- chooseWolfStartingPosition initialSheepPositions 
     startingBoard <- moveWolfOnBoard (2,7) (head startingPawnPositions) gameBoard
     gameLoop startingBoard startingPawnPositions
 
 
-chooseWolfStartingPosition = do
+chooseWolfStartingPosition sheepPostions = do
     putStrLn wolfStartingPosMsg  
-
-    choosenPosition <- getStartingPositionFromUser
-    pawnPos <- return  ((0, 7) : initialSheepPositions)
+    chosenPosition <- getStartingPositionFromUser
+    pawnPos <- return  (chosenPosition : sheepPostions)
     return pawnPos
 
 getStartingPositionFromUser = do
@@ -80,47 +80,18 @@ getStartingPositionFromUser = do
           putStrLn invalidStartingPositionMsg
           getStartingPositionFromUser
 
-
 gameLoop gameBoard pawnPositions = do
-    displayOptionsAndBoard gameBoard
+    printBoard gameBoard
+    displayUserOptions
     option <- getLine
     inGameExecuteOption option gameBoard
     newWolfPosition <- getWolfMovementDirectionFromUser (head pawnPositions) pawnPositions
     wolfMove gameBoard pawnPositions newWolfPosition
 
-getWolfLeftRight (x,y) = do
-  putStrLn "(L)eft/(R)ight?"
-  direction <- getLine
-  case direction of
-      "L" -> return (x - 1, y)
-      "l" -> return (x - 1, y)
-      "R" -> return (x + 1, y)
-      "r" -> return (x + 1, y)
-      _ -> getWolfLeftRight (x,y)
-
-
-getWolfUpDown (x,y) = do
-  putStrLn "(U)p/(D)own?"
-  direction <- getLine
-  case direction of
-      "U" -> getWolfLeftRight (x, y - 1)
-      "u" -> getWolfLeftRight (x, y - 1)
-      "D" -> getWolfLeftRight (x, y + 1)
-      "d" -> getWolfLeftRight (x, y + 1)
-      _ -> getWolfUpDown (x,y)
-
-getWolfMovementDirectionFromUser pos pawnPositions = do
-    position <- getWolfUpDown pos
-    if validateWolfPosition position pawnPositions then
-      return position
-    else
-      do
-        putStrLn "Invalid move"
-        getWolfMovementDirectionFromUser pos pawnPositions
-
 wolfMove gameBoard pawnPositions moveCoordinates = do
      board <- moveWolfOnBoard (head pawnPositions) moveCoordinates gameBoard
      printBoard board
+     
      newPawnPositions <- return (moveCoordinates : (tail pawnPositions))
      checkVerdict board newPawnPositions WolfTurn
 
@@ -138,11 +109,3 @@ checkVerdict board positions turn = case verdict positions turn of
     NotEnd      ->    if turn == SheepsTurn then gameLoop board positions
                                 else sheepMove board positions
 
-
-getNewSheepPositions oldPositions = do
-    return (chooseMove oldPositions)
-
-
-displayOptionsAndBoard board = do
-    printBoard board
-    putStrLn (optionsMsg ++ moveOptionMsg)
