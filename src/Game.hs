@@ -5,11 +5,11 @@ import Piece
 import Player
 import IngameDialogs
 import IngameOptions
+import UserInteraction
 import Gametree.Moves
 import Gametree.GameTree
 import Gametree.Utils
-import Data.List
-import UserInteraction
+
 
 -- main file storing funcions necessary to play the game.
 
@@ -25,6 +25,7 @@ initialBoard = [
                 [Square Nothing, EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare, Square Nothing, EmptySquare]
                ]
 
+initialSheepPositions :: [Position]
 initialSheepPositions = [(1,0), (3,0), (5,0), (7,0)] :: [(Int, Int)]
 
 -- runs the game.
@@ -32,12 +33,14 @@ run = do
     putStrLn welcomeMsg
     promptAndExecuteOption initialBoard
 
+-- prompts for and executes option
 promptAndExecuteOption gameBoard = do
     putStrLn optionsMsg
     option <- getLine
     executeOption option gameBoard
 
-
+-- runs basic game functions except pawn movement. 
+-- this method is used before the game starts and after it finishes
 executeOption option gameBoard = case option of
         "1" -> startGame initialBoard
         "2" -> saveGame gameBoard
@@ -48,20 +51,17 @@ executeOption option gameBoard = case option of
             option <- getLine
             executeOption option gameBoard
 
-
 startGame gameBoard = do
     startingPawnPositions <- chooseWolfStartingPosition initialSheepPositions 
-    startingBoard <- moveWolfOnBoard (2,7) (head startingPawnPositions) gameBoard
+    startingBoard <- return (putWolf gameBoard (head startingPawnPositions))
     printBoard startingBoard
     iterateGame startingBoard startingPawnPositions
-
 
 chooseWolfStartingPosition sheepPostions = do
     putStrLn wolfStartingPosMsg  
     chosenPosition <- getStartingPositionFromUser
     pawnPos <- return  (chosenPosition : sheepPostions)
     return pawnPos
-
 
 getStartingPositionFromUser = do
   position <- getLine
@@ -74,12 +74,10 @@ getStartingPositionFromUser = do
           putStrLn invalidStartingPositionMsg
           getStartingPositionFromUser
 
-
 iterateGame gameBoard pawnPositions = do
     displayUserOptions
     option <- getLine
     executeIngameOption option gameBoard pawnPositions
-
 
 executeIngameOption option gameBoard pawnPositions = case option of
         "1" -> startGame initialBoard
@@ -93,7 +91,6 @@ executeIngameOption option gameBoard pawnPositions = case option of
                 putStrLn wrongOptionMsg
                 option <- getLine
                 executeIngameOption option gameBoard pawnPositions
-
 
 wolfMove gameBoard pawnPositions moveCoordinates = do
     putStrLn wolfMoveMsg
@@ -109,6 +106,7 @@ sheepMove gameBoard pawnPositions = do
     printBoard board
     checkVerdict board positions SheepsTurn
 
+-- checks the verdict and performs action adequate to it.
 checkVerdict board positions turn = case verdict positions turn of
     WolfWon     ->    do 
                         putStrLn wolfWonMsg
