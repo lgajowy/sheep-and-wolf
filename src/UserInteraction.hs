@@ -1,7 +1,7 @@
 module UserInteraction where
 
-import Gametree.Moves
-import Gametree.Utils
+import Moves
+import Utils
 import IngameDialogs
 
 

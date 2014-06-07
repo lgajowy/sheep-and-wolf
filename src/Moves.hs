@@ -1,7 +1,7 @@
-module Gametree.Moves where
+module Moves where
 
 import Data.Maybe
-import Gametree.Utils
+import Utils
 
 --common functions
 

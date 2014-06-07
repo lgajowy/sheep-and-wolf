@@ -1,4 +1,4 @@
-module IngameOptions where
+module Options where
 
 import IngameDialogs
 import System.Exit

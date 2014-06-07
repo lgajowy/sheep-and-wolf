@@ -2,7 +2,7 @@ module Board where
 
 import Piece
 import Data.List
-import Gametree.Utils
+import Utils
 
 -- module that stores all necesary functions for game board logic
 

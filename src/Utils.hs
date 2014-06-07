@@ -1,4 +1,4 @@
-module Gametree.Utils where
+module Utils where
 -- Utility functions and types
 
 type Position = (Int, Int)

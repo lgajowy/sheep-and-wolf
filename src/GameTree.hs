@@ -1,10 +1,10 @@
-module Gametree.GameTree where
+module GameTree where
 
 import Data.List
 
 -- Our modules
-import Gametree.Utils
-import Gametree.Moves
+import Utils
+import Moves
 
 
 data PositionsVerdict = NotEnd | WolfWon | SheepsWon

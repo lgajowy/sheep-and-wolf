@@ -4,11 +4,11 @@ import Board
 import Piece
 import Player
 import IngameDialogs
-import IngameOptions
+import Options
 import UserInteraction
-import Gametree.Moves
-import Gametree.GameTree
-import Gametree.Utils
+import Moves
+import GameTree
+import Utils
 
 
 -- main file storing funcions necessary to play the game.
