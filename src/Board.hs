@@ -42,11 +42,11 @@ updateMatrixAt (j,i) f board
 
 
 moveWolfOnBoard oldPosition newPosition board = do
-    return (putWolf (putNothing board oldPosition) newPosition)
+    return (putWolfInSquare (putNothingInSquare board oldPosition) newPosition)
 
 moveSheepOnBoard board oldPositions newPositions =
-    return (foldl (putNothing) (foldl (putSheep) board (tail (newPositions))) ((tail oldPositions) \\ (tail (newPositions))))
+    return (foldl (putNothingInSquare) (foldl (putSheepInSquare) board (tail (newPositions))) ((tail oldPositions) \\ (tail (newPositions))))
 
-putSheep board position = updateMatrixAt position (\_ -> Square(Just Sheep)) board
-putWolf board position = updateMatrixAt position (\_ -> Square(Just Wolf)) board
-putNothing board position = updateMatrixAt position (\_ -> Square(Nothing)) board
+putSheepInSquare board position = updateMatrixAt position (\_ -> Square(Just Sheep)) board
+putWolfInSquare board position = updateMatrixAt position (\_ -> Square(Just Wolf)) board
+putNothingInSquare board position = updateMatrixAt position (\_ -> Square(Nothing)) board

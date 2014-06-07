@@ -69,7 +69,7 @@ getStartingPositionFromUser = do
 
 startGame gameBoard = do
     chosenPosition <- chooseWolfStartingPosition
-    startingBoard <- return (putWolf gameBoard (chosenPosition))
+    startingBoard <- return (putWolfInSquare gameBoard (chosenPosition))
     printBoard startingBoard
     iterateGameLoop startingBoard (chosenPosition : initialSheepPositions)
 
