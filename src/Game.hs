@@ -11,6 +11,8 @@ import Gametree.Utils
 import Data.List
 import UserInteraction
 
+-- main file storing funcions necessary to play the game.
+
 initialBoard :: Board
 initialBoard = [
                 [EmptySquare, Square (Just Sheep), EmptySquare, Square (Just Sheep), EmptySquare, Square (Just Sheep), EmptySquare, Square (Just Sheep)],
@@ -25,14 +27,13 @@ initialBoard = [
 
 initialSheepPositions = [(1,0), (3,0), (5,0), (7,0)] :: [(Int, Int)]
 
+
 run = do
     putStrLn welcomeMsg
-    mainProgramLoop
-
-mainProgramLoop = do
     putStrLn optionsMsg
     option <- getLine
     executeOption option initialBoard
+
 
 executeOption option gameBoard = case option of
         "1" -> startGame initialBoard
@@ -55,11 +56,10 @@ inGameExecuteOption option gameBoard = case option of
             option <- getLine
             inGameExecuteOption option gameBoard
 
-
-
 startGame gameBoard = do
     startingPawnPositions <- chooseWolfStartingPosition initialSheepPositions 
     startingBoard <- moveWolfOnBoard (2,7) (head startingPawnPositions) gameBoard
+    printBoard startingBoard
     gameLoop startingBoard startingPawnPositions
 
 
@@ -80,8 +80,8 @@ getStartingPositionFromUser = do
           putStrLn invalidStartingPositionMsg
           getStartingPositionFromUser
 
+
 gameLoop gameBoard pawnPositions = do
-    printBoard gameBoard
     displayUserOptions
     option <- getLine
     inGameExecuteOption option gameBoard
@@ -89,19 +89,18 @@ gameLoop gameBoard pawnPositions = do
     wolfMove gameBoard pawnPositions newWolfPosition
 
 wolfMove gameBoard pawnPositions moveCoordinates = do
-     board <- moveWolfOnBoard (head pawnPositions) moveCoordinates gameBoard
-     printBoard board
-     
-     newPawnPositions <- return (moveCoordinates : (tail pawnPositions))
-     checkVerdict board newPawnPositions WolfTurn
-
+    putStrLn wolfMoveMsg
+    board <- moveWolfOnBoard (head pawnPositions) moveCoordinates gameBoard
+    printBoard board
+    newPawnPositions <- return (moveCoordinates : (tail pawnPositions))
+    checkVerdict board newPawnPositions WolfTurn
 
 sheepMove gameBoard pawnPositions = do
+    putStrLn sheepMoveMsg
     positions <- getNewSheepPositions (pawnPositions)
     board <- moveSheepOnBoard gameBoard (pawnPositions) positions
     printBoard board
     checkVerdict board positions SheepsTurn
-
 
 checkVerdict board positions turn = case verdict positions turn of
     WolfWon     ->    putStrLn wolfWonMsg

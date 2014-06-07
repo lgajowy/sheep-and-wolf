@@ -1,7 +1,8 @@
 module IngameDialogs where
 
 
--- initial dialogs
+-- text messages that are displayed during game. 
+
 welcomeMsg = "Welcome to wolf and sheep game!"
 
 optionsMsg = "Choose option (from 1 to 4):\n\
@@ -36,7 +37,9 @@ gameSavedMsg = "Game saved.\n"
 
 exitMsg = "Bye bye!"
 
-wolfMoveMsg = "Wolf's turn. Choose direction:"
+wolfMoveMsg = "Wolf's turn..."
+
+sheepMoveMsg = "Sheep's turn..."
 
 wolfWonMsg = "Wolf won the game!"
 
