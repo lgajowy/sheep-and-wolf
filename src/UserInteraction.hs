@@ -1,14 +1,18 @@
 module UserInteraction where
 
 import Gametree.Moves
+import Gametree.Utils
 import IngameDialogs
 
 
 -- module storing functions for interaction with users
 
+-- shows available options to user
 displayUserOptions = do
     putStrLn (optionsMsg ++ moveOptionMsg)
 
+
+-- gets horizontal movement direction from user
 getWolfLeftRight (x,y) = do
   putStrLn leftRightMsg
   direction <- getLine
@@ -19,6 +23,7 @@ getWolfLeftRight (x,y) = do
       "r" -> return (x + 1, y)
       _ -> getWolfLeftRight (x,y)
 
+-- gets vertical movement direction from user
 getWolfUpDown (x,y) = do
   putStrLn upDownMsg
   direction <- getLine

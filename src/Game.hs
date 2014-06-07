@@ -51,17 +51,10 @@ executeOption option gameBoard = case option of
             option <- getLine
             executeOption option gameBoard
 
-startGame gameBoard = do
-    startingPawnPositions <- chooseWolfStartingPosition initialSheepPositions 
-    startingBoard <- return (putWolf gameBoard (head startingPawnPositions))
-    printBoard startingBoard
-    iterateGame startingBoard startingPawnPositions
-
-chooseWolfStartingPosition sheepPostions = do
+chooseWolfStartingPosition = do
     putStrLn wolfStartingPosMsg  
     chosenPosition <- getStartingPositionFromUser
-    pawnPos <- return  (chosenPosition : sheepPostions)
-    return pawnPos
+    return chosenPosition
 
 getStartingPositionFromUser = do
   position <- getLine
@@ -74,7 +67,13 @@ getStartingPositionFromUser = do
           putStrLn invalidStartingPositionMsg
           getStartingPositionFromUser
 
-iterateGame gameBoard pawnPositions = do
+startGame gameBoard = do
+    chosenPosition <- chooseWolfStartingPosition
+    startingBoard <- return (putWolf gameBoard (chosenPosition))
+    printBoard startingBoard
+    iterateGameLoop startingBoard (chosenPosition : initialSheepPositions)
+
+iterateGameLoop gameBoard pawnPositions = do
     displayUserOptions
     option <- getLine
     executeIngameOption option gameBoard pawnPositions
@@ -114,6 +113,6 @@ checkVerdict board positions turn = case verdict positions turn of
     SheepsWon   ->    do 
                         putStrLn sheepWonMsg
                         promptAndExecuteOption board
-    NotEnd      ->    if turn == SheepsTurn then iterateGame board positions
+    NotEnd      ->    if turn == SheepsTurn then iterateGameLoop board positions
                                 else sheepMove board positions
 
