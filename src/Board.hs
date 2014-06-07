@@ -4,6 +4,7 @@ import Piece
 import Data.List
 import Gametree.Utils
 
+-- module that stores all necesary functions for game board logic
 
 data Square = EmptySquare | Square (Maybe Piece)
 
@@ -29,30 +30,7 @@ printBoard [x]    = do printRow x
                        putStrLn "\n"
 printBoard (x:xs) = do printRow x
                        printBoard xs
-
-findWolf :: Board -> Int -> (Int, Maybe Int)
-findWolf (headRow:tailRows) counter = if (findWolfInRow(headRow) == Nothing) 
-                                    then findWolf tailRows (counter + 1)
-                                    else (counter, findWolfInRow(headRow))
-
-findWolfInRow :: [Square] -> Maybe Int
-findWolfInRow row = findIndex(fieldHasWolf) row
-
-fieldHasWolf field = 
-  case field of
-    EmptySquare         -> False
-    Square(Just Wolf)   -> True
-    _                   -> False
-
-findSheepInRow :: [Square] -> [Int]
-findSheepInRow row = findIndices(fieldHasSheep) row
-
-fieldHasSheep field = 
-  case field of
-    EmptySquare         -> False
-    Square(Just Sheep)  -> True
-    _                   -> False    
-
+ 
 updateMatrixAt ::  Position -> (Square->Square) -> Board -> Board
 updateMatrixAt (j,i) f board
  | (upperRows, thisRow : lowerRows ) <- splitAt i board
@@ -64,10 +42,11 @@ updateMatrixAt (j,i) f board
 
 
 moveWolfOnBoard oldPosition newPosition board = do
-      return (updateMatrixAt newPosition (\_ -> Square(Just Wolf)) (updateMatrixAt oldPosition (\_ -> Square(Nothing)) board))
+    return (putWolf (putNothing board oldPosition) newPosition)
 
 moveSheepOnBoard board oldPositions newPositions =
-      return (foldl (putNothing) (foldl (putSheep) board (tail (newPositions))) ((tail oldPositions) \\ (tail (newPositions))))
+    return (foldl (putNothing) (foldl (putSheep) board (tail (newPositions))) ((tail oldPositions) \\ (tail (newPositions))))
 
 putSheep board position = updateMatrixAt position (\_ -> Square(Just Sheep)) board
+putWolf board position = updateMatrixAt position (\_ -> Square(Just Wolf)) board
 putNothing board position = updateMatrixAt position (\_ -> Square(Nothing)) board

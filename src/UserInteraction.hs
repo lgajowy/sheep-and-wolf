@@ -3,6 +3,9 @@ module UserInteraction where
 import Gametree.Moves
 import IngameDialogs
 
+
+-- module storing functions for interaction with users
+
 displayUserOptions = do
     putStrLn (optionsMsg ++ moveOptionMsg)
 

@@ -1,5 +1,7 @@
 module Piece where
 
+-- module storing types of pieces (Sheep and Wolf)
+
 data Piece = Sheep | Wolf deriving Eq
 
 instance Show Piece where 

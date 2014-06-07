@@ -1,5 +1,7 @@
 module Player where
 
+-- module storing types of players
+
 class Player a where
     next :: a -> a
     

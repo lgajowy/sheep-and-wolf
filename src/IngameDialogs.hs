@@ -1,7 +1,7 @@
 module IngameDialogs where
 
 
--- text messages that are displayed during game. 
+-- module storing text messages that are displayed during game. 
 
 welcomeMsg = "Welcome to wolf and sheep game!"
 

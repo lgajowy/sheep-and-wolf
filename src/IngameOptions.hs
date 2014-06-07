@@ -4,6 +4,8 @@ import IngameDialogs
 import System.Exit
 import Board
 
+-- module storing functions for additional options not related directly with playing 
+
 saveGame board = do  
     path <- getPathFromUser
     save board path
