@@ -41,9 +41,9 @@ wolfMoveMsg = "Wolf's turn..."
 
 sheepMoveMsg = "Sheep's turn..."
 
-wolfWonMsg = "Wolf won the game!"
+wolfWonMsg = "Wolf won the game!!!\n"
 
-sheepWonMsg = "Sheep won the game!"
+sheepWonMsg = "Sheep won the game!!!\n"
 
 
 

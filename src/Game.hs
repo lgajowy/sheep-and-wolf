@@ -27,12 +27,15 @@ initialBoard = [
 
 initialSheepPositions = [(1,0), (3,0), (5,0), (7,0)] :: [(Int, Int)]
 
-
+-- runs the game.
 run = do
     putStrLn welcomeMsg
+    promptAndExecuteOption initialBoard
+
+promptAndExecuteOption gameBoard = do
     putStrLn optionsMsg
     option <- getLine
-    executeOption option initialBoard
+    executeOption option gameBoard
 
 
 executeOption option gameBoard = case option of
@@ -45,22 +48,12 @@ executeOption option gameBoard = case option of
             option <- getLine
             executeOption option gameBoard
 
-inGameExecuteOption option gameBoard = case option of
-        "1" -> startGame initialBoard
-        "2" -> saveGame gameBoard
-        "3" -> loadGame
-        "4" -> exitGame
-        "5" -> putStrLn "wolf moves\n"
-        _ -> do
-            putStrLn wrongOptionMsg
-            option <- getLine
-            inGameExecuteOption option gameBoard
 
 startGame gameBoard = do
     startingPawnPositions <- chooseWolfStartingPosition initialSheepPositions 
     startingBoard <- moveWolfOnBoard (2,7) (head startingPawnPositions) gameBoard
     printBoard startingBoard
-    gameLoop startingBoard startingPawnPositions
+    iterateGame startingBoard startingPawnPositions
 
 
 chooseWolfStartingPosition sheepPostions = do
@@ -68,6 +61,7 @@ chooseWolfStartingPosition sheepPostions = do
     chosenPosition <- getStartingPositionFromUser
     pawnPos <- return  (chosenPosition : sheepPostions)
     return pawnPos
+
 
 getStartingPositionFromUser = do
   position <- getLine
@@ -81,12 +75,25 @@ getStartingPositionFromUser = do
           getStartingPositionFromUser
 
 
-gameLoop gameBoard pawnPositions = do
+iterateGame gameBoard pawnPositions = do
     displayUserOptions
     option <- getLine
-    inGameExecuteOption option gameBoard
-    newWolfPosition <- getWolfMovementDirectionFromUser (head pawnPositions) pawnPositions
-    wolfMove gameBoard pawnPositions newWolfPosition
+    executeIngameOption option gameBoard pawnPositions
+
+
+executeIngameOption option gameBoard pawnPositions = case option of
+        "1" -> startGame initialBoard
+        "2" -> saveGame gameBoard
+        "3" -> loadGame
+        "4" -> exitGame
+        "5" -> do 
+                newWolfPosition <- getWolfMovementDirectionFromUser (head pawnPositions) pawnPositions
+                wolfMove gameBoard pawnPositions newWolfPosition
+        _   -> do
+                putStrLn wrongOptionMsg
+                option <- getLine
+                executeIngameOption option gameBoard pawnPositions
+
 
 wolfMove gameBoard pawnPositions moveCoordinates = do
     putStrLn wolfMoveMsg
@@ -103,8 +110,12 @@ sheepMove gameBoard pawnPositions = do
     checkVerdict board positions SheepsTurn
 
 checkVerdict board positions turn = case verdict positions turn of
-    WolfWon     ->    putStrLn wolfWonMsg
-    SheepsWon   ->    putStrLn sheepWonMsg
-    NotEnd      ->    if turn == SheepsTurn then gameLoop board positions
+    WolfWon     ->    do 
+                        putStrLn wolfWonMsg
+                        promptAndExecuteOption board
+    SheepsWon   ->    do 
+                        putStrLn sheepWonMsg
+                        promptAndExecuteOption board
+    NotEnd      ->    if turn == SheepsTurn then iterateGame board positions
                                 else sheepMove board positions
 
