@@ -2,19 +2,20 @@ module Options where
 
 import IngameDialogs
 import System.Exit
-import Board
+import System.IO
+import Utils
 
 -- module storing functions for additional options not related directly with playing 
 
-saveGame board = do  
+saveGame figuresPostions = do  
     path <- getPathFromUser
-    save board path
+    save figuresPostions path
     putStrLn gameSavedMsg
 
 loadGame = do 
     path <- getPathFromUser 
     file <- load path
-    putStrLn file
+    return file
     
 exitGame = do
     putStrLn exitMsg
@@ -25,9 +26,12 @@ getPathFromUser = do
     filePath <- getLine
     return filePath
 
-load :: (Read a) => FilePath -> IO a
-load f = do s <- readFile f
-            return (read s)
 
-save :: Board -> FilePath -> IO ()
-save board filePath = writeFile filePath (show board)
+load :: String -> IO FiguresPositions
+load databaseFile =
+    withFile databaseFile ReadMode (\handle -> do
+        contents <- hGetContents handle
+        readIO contents)
+
+save :: FiguresPositions -> FilePath -> IO ()
+save figuresPostions filePath = writeFile filePath (show figuresPostions)
