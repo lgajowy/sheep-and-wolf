@@ -53,6 +53,7 @@ executeOption option gameBoard = case option of
                 case loadedPawnPositions of
                   Nothing -> promptAndExecuteOption gameBoard
                   (Just loadedPositions) -> do
+                    print loadedPositions
                     newBoard <- reinitializeBoard loadedPositions
                     printBoard newBoard
                     iterateGameLoop newBoard loadedPositions
@@ -105,7 +106,7 @@ wolfMove gameBoard pawnPositions moveCoordinates = do
 sheepMove gameBoard pawnPositions = do
     putStrLn sheepMoveMsg
     positions <- getNewSheepPositions (pawnPositions)
-    board <- moveSheepOnBoard gameBoard (pawnPositions) positions
+    board <- moveSheepOnBoard gameBoard (tail pawnPositions) (tail positions)
     printBoard board
     checkVerdict board positions SheepsTurn
 

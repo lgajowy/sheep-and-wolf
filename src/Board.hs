@@ -30,7 +30,7 @@ printBoard [x]    = do printRow x
                        putStrLn "\n"
 printBoard (x:xs) = do printRow x
                        printBoard xs
- 
+
 updateMatrixAt ::  Position -> (Square->Square) -> Board -> Board
 updateMatrixAt (j,i) f board
  | (upperRows, thisRow : lowerRows ) <- splitAt i board
@@ -40,11 +40,11 @@ updateMatrixAt (j,i) f board
                           : lowerRows
  | otherwise = error "Tried to index matrix outside range"
 
-moveWolfOnBoard oldPosition newPosition board = 
+moveWolfOnBoard oldPosition newPosition board =
     return (putWolfInSquare (putNothingInSquare board oldPosition) newPosition)
 
 moveSheepOnBoard board oldPositions newPositions =
-    return (foldl (putNothingInSquare) (foldl (putSheepInSquare) board (tail (newPositions))) ((tail oldPositions) \\ (tail (newPositions))))
+    return (foldl (putNothingInSquare) (foldl (putSheepInSquare) board (newPositions)) (oldPositions \\ newPositions))
 
 putSheepInSquare board position = updateMatrixAt position (\_ -> Square(Just Sheep)) board
 putWolfInSquare board position = updateMatrixAt position (\_ -> Square(Just Wolf)) board
