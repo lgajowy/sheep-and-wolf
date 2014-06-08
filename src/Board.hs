@@ -13,12 +13,6 @@ instance Show Square where
     show (Square Nothing )          = " "
     show (Square (Just piece) )     = show piece
 
-instance Read Square where
-readsPrec _ (s:xs)  | s == '_' = [(EmptySquare, xs)]
-                    | s == ' ' = [(Square Nothing, xs)]
-                    | s == 'W' = [(Square (Just Wolf), xs)]
-                    | s == 'S' = [(Square (Just Sheep), xs)]
-
 type Board = [[Square]]
 
 printRow :: [Square] -> IO ()
