@@ -53,7 +53,6 @@ executeOption option gameBoard = case option of
                 case loadedPawnPositions of
                   Nothing -> promptAndExecuteOption gameBoard
                   (Just loadedPositions) -> do
-                    print loadedPositions
                     newBoard <- reinitializeBoard loadedPositions
                     printBoard newBoard
                     iterateGameLoop newBoard loadedPositions
