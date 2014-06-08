@@ -57,7 +57,6 @@ rate (Node t a) depth = if depth < 6 then verd else incompleteVerd
 score :: GameTree -> (FiguresPositions, Float)
 score (Node t a) = (a, (rate (Node t a) 1))
 
-
 getNewSheepPositions oldPositions = do
     return (chooseMove oldPositions)
 
@@ -65,8 +64,3 @@ getNewSheepPositions oldPositions = do
 chooseMove :: FiguresPositions -> FiguresPositions
 chooseMove positions = fst (maximumBy (\(x, y) (x1, y1) -> compare y y1) nodes)
             where nodes = map (score) (initSheeps positions)
-
-examplePosition = [(1,6),(0,5),(3,5),(3,7),(5,7)] :: FiguresPositions
-lostTree = [(3,6), (1,2), (1,4), (3,4), (5,6)] :: FiguresPositions
-exampleTree = Node WolfTurn [(0,0), (0,0), (0,0), (0,0), (0,0)]
-gameTree = Node SheepsTurn [(0,7), (1,0), (3,0), (5,0), (7,0)]

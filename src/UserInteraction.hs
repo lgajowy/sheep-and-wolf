@@ -11,7 +11,6 @@ import IngameDialogs
 displayUserOptions = do
     putStrLn (inGameOptionsMsg)
 
-
 -- gets horizontal movement direction from user
 getWolfLeftRight (x,y) = do
   putStrLn leftRightMsg
@@ -43,11 +42,13 @@ getWolfMovementDirectionFromUser pos pawnPositions = do
         putStrLn invalidMoveMsg
         getWolfMovementDirectionFromUser pos pawnPositions
 
+-- prompts user for starting wolf position and lets him choose it
 chooseWolfStartingPosition = do
     putStrLn wolfStartingPosMsg
     chosenPosition <- getStartingPositionFromUser
     return chosenPosition
 
+-- gets from standard IO the wolf pawn position
 getStartingPositionFromUser :: IO (Int, Int)
 getStartingPositionFromUser = do
   position <- getLine
