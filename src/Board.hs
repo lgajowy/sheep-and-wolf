@@ -41,7 +41,7 @@ updateMatrixAt (j,i) f board
  | otherwise = error "Tried to index matrix outside range"
 
 
-moveWolfOnBoard oldPosition newPosition board = do
+moveWolfOnBoard oldPosition newPosition board = 
     return (putWolfInSquare (putNothingInSquare board oldPosition) newPosition)
 
 moveSheepOnBoard board oldPositions newPositions =

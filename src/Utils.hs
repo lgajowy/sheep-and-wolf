@@ -3,6 +3,10 @@ module Utils where
 
 type Position = (Int, Int)
 
+--represents positions of figures on board
+--the first one is the wolf
+type FiguresPositions = [Position]
+
 -- edits position so to move by vector
 addPosition::(Int,Int)->(Int,Int)->(Int,Int)
 addPosition (a,b) (c,d) = (a+c,b+d)
@@ -16,6 +20,5 @@ inside = not . outside
 -- cartesian product
 cartProd xs ys = [(x,y) | x <- xs, y <- ys]
 
---represents positions of figures on board
---the first one is the wolf
-type FiguresPositions = [Position]
+
+
