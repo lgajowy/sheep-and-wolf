@@ -40,7 +40,6 @@ updateMatrixAt (j,i) f board
                           : lowerRows
  | otherwise = error "Tried to index matrix outside range"
 
-
 moveWolfOnBoard oldPosition newPosition board = 
     return (putWolfInSquare (putNothingInSquare board oldPosition) newPosition)
 

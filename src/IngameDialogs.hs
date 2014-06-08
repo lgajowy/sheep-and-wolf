@@ -5,11 +5,17 @@ module IngameDialogs where
 
 welcomeMsg = "Welcome to wolf and sheep game!"
 
-optionsMsg = "Choose option (from 1 to 4):\n\
-	      \1. Start / Restart game\n\
+startingOptionsMsg = "Choose option (from 1 to 3):\n\
+	      \1. Start game\n\
+		  \2. Load game\n\
+		  \3. Exit game\n"
+
+inGameOptionsMsg = "Choose option (from 1 to 4):\n\
+	      \1. Restart game\n\
 		  \2. Save game\n\
 		  \3. Load game (overwrites current game state!)\n\
-		  \4. Exit game\n"
+		  \4. Exit game\n\
+		  \5. Move wolf pawn\n"
 
 wolfStartingPosMsg = "Plese give wolf starting position:\n\
 					\Enter 1 for field (0,7)\n\
@@ -18,8 +24,6 @@ wolfStartingPosMsg = "Plese give wolf starting position:\n\
 					\4 for field (6,7)\n"
 
 invalidStartingPositionMsg = "Invalid starting position! Please try again!\n"
-
-moveOptionMsg = "5. Move wolf pawn\n"
 
 wrongOptionMsg = "Wrong option! Please choose again:\n"
 

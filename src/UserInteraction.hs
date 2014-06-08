@@ -9,7 +9,7 @@ import IngameDialogs
 
 -- shows available options to user
 displayUserOptions = do
-    putStrLn (optionsMsg ++ moveOptionMsg)
+    putStrLn (inGameOptionsMsg)
 
 
 -- gets horizontal movement direction from user
