@@ -1,27 +1,31 @@
 module Options where
 
+import Control.Exception
 import IngameDialogs
 import System.Exit
 import System.IO
 import Utils
 
--- module storing functions for additional options not related directly with playing 
+-- module storing functions for additional options not related directly with playing
 
-saveGame figuresPostions = do  
+saveGame figuresPostions = do
     path <- getPathFromUser
     save figuresPostions path
     putStrLn gameSavedMsg
 
-loadGame = do 
-    path <- getPathFromUser 
-    file <- load path
-    return file
-    
+loadGame = do
+    path <- getPathFromUser
+    result <- try (load path) :: IO (Either SomeException FiguresPositions)
+    case result of
+      Left ex -> do putStrLn $ "Could not read the given file" ++ show ex
+                    return Nothing
+      Right positions -> return (Just positions)
+
 exitGame = do
     putStrLn exitMsg
     exitSuccess
 
-getPathFromUser = do 
+getPathFromUser = do
     putStrLn enterPathMsg
     filePath <- getLine
     return filePath

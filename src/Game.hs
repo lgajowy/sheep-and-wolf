@@ -41,18 +41,21 @@ promptAndExecuteOption gameBoard = do
     executeOption option gameBoard
 
 -- puts all pawns on new board
-reinitializeBoard pawnPositions = 
+reinitializeBoard pawnPositions =
     moveSheepOnBoard ( putWolfInSquare initialBoard (head pawnPositions)) initialSheepPositions (tail pawnPositions)
 
--- runs basic game functions except pawn movement. 
+-- runs basic game functions except pawn movement.
 -- this method is used before the game starts and after it finishes
 executeOption option gameBoard = case option of
         "1" -> startGame initialBoard
-        "2" -> do 
-            loadedPawnPositions <- loadGame
-            newBoard <- reinitializeBoard loadedPawnPositions
-            printBoard newBoard
-            iterateGameLoop newBoard loadedPawnPositions
+        "2" -> do
+                loadedPawnPositions <- loadGame
+                case loadedPawnPositions of
+                  Nothing -> promptAndExecuteOption gameBoard
+                  (Just loadedPositions) -> do
+                    newBoard <- reinitializeBoard loadedPositions
+                    printBoard newBoard
+                    iterateGameLoop newBoard loadedPositions
         "3" -> exitGame
         _   -> do
             putStrLn wrongOptionMsg
@@ -60,7 +63,7 @@ executeOption option gameBoard = case option of
             executeOption option gameBoard
 
 chooseWolfStartingPosition = do
-    putStrLn wolfStartingPosMsg  
+    putStrLn wolfStartingPosMsg
     chosenPosition <- getStartingPositionFromUser
     return chosenPosition
 
@@ -71,7 +74,7 @@ getStartingPositionFromUser = do
     "2" -> return (2,7)
     "3" -> return (4,7)
     "4" -> return (6,7)
-    _   -> do 
+    _   -> do
           putStrLn invalidStartingPositionMsg
           getStartingPositionFromUser
 
@@ -88,16 +91,19 @@ iterateGameLoop gameBoard pawnPositions = do
 
 executeIngameOption option gameBoard pawnPositions = case option of
         "1" -> startGame initialBoard
-        "2" -> do 
+        "2" -> do
                 saveGame pawnPositions
                 iterateGameLoop gameBoard pawnPositions
-        "3" -> do 
+        "3" -> do
                 loadedPawnPositions <- loadGame
-                newBoard <- reinitializeBoard loadedPawnPositions
-                printBoard newBoard
-                iterateGameLoop newBoard loadedPawnPositions
+                case loadedPawnPositions of
+                  Nothing -> iterateGameLoop gameBoard pawnPositions
+                  (Just loadedPositions) -> do
+                    newBoard <- reinitializeBoard loadedPositions
+                    printBoard newBoard
+                    iterateGameLoop newBoard loadedPositions
         "4" -> exitGame
-        "5" -> do 
+        "5" -> do
                 newWolfPosition <- getWolfMovementDirectionFromUser (head pawnPositions) pawnPositions
                 wolfMove gameBoard pawnPositions newWolfPosition
         _   -> do
@@ -121,12 +127,11 @@ sheepMove gameBoard pawnPositions = do
 
 -- checks the verdict and performs action adequate to it.
 checkVerdict board positions turn = case verdict positions turn of
-    WolfWon     ->    do 
+    WolfWon     ->    do
                         putStrLn wolfWonMsg
                         promptAndExecuteOption board
-    SheepsWon   ->    do 
+    SheepsWon   ->    do
                         putStrLn sheepWonMsg
                         promptAndExecuteOption board
     NotEnd      ->    if turn == SheepsTurn then iterateGameLoop board positions
                                 else sheepMove board positions
-
