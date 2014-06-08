@@ -9,7 +9,6 @@ import Moves
 
 data PositionsVerdict = NotEnd | WolfWon | SheepsWon
 
-verdict :: FiguresPositions -> Turn -> PositionsVerdict
 
 --Wolf wins when reaches one of the four top positions
 verdictW positions = foldl (&&) True (map (greater (head positions)) (tail positions))
@@ -17,6 +16,7 @@ verdictW positions = foldl (&&) True (map (greater (head positions)) (tail posit
 
 --Sheeps win when wolf has no move.
 --Wolf wins when sheeps have no move in their turn
+verdict :: FiguresPositions -> Turn -> PositionsVerdict
 verdict positions t | verdictW positions = WolfWon
                     | (possibleWolfMoves positions) == [] = SheepsWon
                     | (possibleSheepsMoves positions) == [] && t ==SheepsTurn = WolfWon
@@ -43,8 +43,7 @@ distanceSum (w:xs) =  maximum (map distanceSheep (permutations xs)) + (distanceW
 
 
 --Rates the current node. The tree is evaluated up to 7 level deep. Starting from the given level
---For not fully evaluated nodes it uses heuristic so that the algorithm tries to minimize distance to wolf
--- and distance between sheeps
+--For not fully evaluated nodes it uses heuristic
 rate :: GameTree -> Int -> Float
 rate (Node t a) depth = if depth < 6 then verd else incompleteVerd
                                     where verd = case verdict a t of
