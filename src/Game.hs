@@ -62,22 +62,6 @@ executeOption option gameBoard = case option of
             option <- getLine
             executeOption option gameBoard
 
-chooseWolfStartingPosition = do
-    putStrLn wolfStartingPosMsg
-    chosenPosition <- getStartingPositionFromUser
-    return chosenPosition
-
-getStartingPositionFromUser = do
-  position <- getLine
-  case position of
-    "1" -> return (0,7)
-    "2" -> return (2,7)
-    "3" -> return (4,7)
-    "4" -> return (6,7)
-    _   -> do
-          putStrLn invalidStartingPositionMsg
-          getStartingPositionFromUser
-
 startGame gameBoard = do
     chosenPosition <- chooseWolfStartingPosition
     startingBoard <- return (putWolfInSquare gameBoard (chosenPosition))

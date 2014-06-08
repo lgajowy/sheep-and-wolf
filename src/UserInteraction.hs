@@ -42,3 +42,20 @@ getWolfMovementDirectionFromUser pos pawnPositions = do
       do
         putStrLn invalidMoveMsg
         getWolfMovementDirectionFromUser pos pawnPositions
+
+chooseWolfStartingPosition = do
+    putStrLn wolfStartingPosMsg
+    chosenPosition <- getStartingPositionFromUser
+    return chosenPosition
+
+getStartingPositionFromUser :: IO (Int, Int)
+getStartingPositionFromUser = do
+  position <- getLine
+  case position of
+    "1" -> return (0,7)
+    "2" -> return (2,7)
+    "3" -> return (4,7)
+    "4" -> return (6,7)
+    _   -> do
+          putStrLn invalidStartingPositionMsg
+          getStartingPositionFromUser
